@@ -11,10 +11,10 @@ if __name__ == "__main__":
     wiki_worker = WikiWorker()
 
     yahoo_price_scheduler_threads = []
-    num_yahoo_workers = 4
+    num_yahoo_workers = 8
 
     for i in range(num_yahoo_workers):
-        yahoo_scheduler = YahooScheduler(input_queue=symbol_queue)
+        yahoo_scheduler = YahooScheduler(id = i, input_queue=symbol_queue)
         yahoo_price_scheduler_threads.append(yahoo_scheduler)
 
     for symbol in wiki_worker.get_sp_500():
@@ -25,6 +25,5 @@ if __name__ == "__main__":
 
     for i in range(len(yahoo_price_scheduler_threads)):
         yahoo_price_scheduler_threads[i].join()
-
 
     print(f"Scraper finished in {time.time() - scraper_start} seconds.")
