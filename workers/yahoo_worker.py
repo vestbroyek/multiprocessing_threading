@@ -6,8 +6,8 @@ import time
 from queue import Empty
 from requests.exceptions import ConnectionError
 
-class YahooScheduler(threading.Thread):
 
+class YahooScheduler(threading.Thread):
     def __init__(self, id, input_queue, **kwargs):
         super().__init__(**kwargs)
         self.id = id
@@ -21,21 +21,22 @@ class YahooScheduler(threading.Thread):
         """
         while True:
             try:
-                task = self.input_queue.get(timeout=10) # Get a task from the input queue
+                task = self.input_queue.get(
+                    timeout=10
+                )  # Get a task from the input queue
             except Empty:
-                print('Yahoo queue is empty')
+                print("Yahoo queue is empty")
                 break
-            if task == 'DONE': # If the task is 'DONE', stop the thread
+            if task == "DONE":  # If the task is 'DONE', stop the thread
                 break
 
-            yahoo_worker = YahooFinanceWorker(thread_id = self.id, symbol=task) 
+            yahoo_worker = YahooFinanceWorker(thread_id=self.id, symbol=task)
             price = yahoo_worker.get_price()
             print(self.id, " ", task, " ", price)
             time.sleep(random.random())
 
 
-class YahooFinanceWorker():
-
+class YahooFinanceWorker:
     def __init__(self, thread_id, symbol: str, **kwargs):
         super().__init__(**kwargs)
         self.thread_id = thread_id
@@ -46,16 +47,18 @@ class YahooFinanceWorker():
     def _extract_company_info(self, page_html: str) -> float:
         tree = html.fromstring(page_html)
         try:
-            company_price = tree.xpath("//*[@id=\"quote-header-info\"]/div[3]/div[1]/div[1]/fin-streamer[1]")[0].text
+            company_price = tree.xpath(
+                '//*[@id="quote-header-info"]/div[3]/div[1]/div[1]/fin-streamer[1]'
+            )[0].text
             if company_price:
-                company_price = company_price.replace(',', '')
+                company_price = company_price.replace(",", "")
                 return company_price
         except ConnectionError:
             print(f"Thread ID {self.thread_id} raised a connection error")
 
     def get_price(self):
         time.sleep(0.2)
-        response = requests.get(self.url, headers={"User-Agent":"Mozilla/5.0"})
+        response = requests.get(self.url, headers={"User-Agent": "Mozilla/5.0"})
         if response.status_code == 200:
             price = self._extract_company_info(response.text)
             return price

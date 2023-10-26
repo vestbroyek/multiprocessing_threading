@@ -2,6 +2,7 @@ import unittest
 from workers.wiki_worker import WikiWorker
 from workers.yahoo_worker import YahooFinanceWorker
 
+
 class TestYahooFinanceWorker(unittest.TestCase):
     def setUp(self):
         # Fetch a list of symbols from the WikiWorker
@@ -19,5 +20,5 @@ class TestYahooFinanceWorker(unittest.TestCase):
             current_workers[i].join()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
