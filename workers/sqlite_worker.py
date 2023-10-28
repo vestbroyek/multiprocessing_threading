@@ -41,11 +41,10 @@ class SQLiteScheduler(threading.Thread):
                 break
             symbol, price, extraction_time = val
 
-            conn = sqlite3.connect("stocks.db")
-
-            # create reusable connection
-            worker = SQLiteWorker(symbol, price, extraction_time, conn)
-            worker.insert_data()
+            if symbol and price:
+                conn = sqlite3.connect("stocks.db")
+                worker = SQLiteWorker(symbol, price, extraction_time, conn)
+                worker.insert_data()
 
 
 class SQLiteWorker:
