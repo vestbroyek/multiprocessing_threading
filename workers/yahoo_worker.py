@@ -1,3 +1,4 @@
+import datetime
 import random
 import threading
 import requests
@@ -8,10 +9,11 @@ from requests.exceptions import ConnectionError
 
 
 class YahooScheduler(threading.Thread):
-    def __init__(self, id, input_queue, **kwargs):
+    def __init__(self, id, input_queue, output_queue, **kwargs):
         super().__init__(**kwargs)
         self.id = id
         self.input_queue = input_queue
+        self.output_queue = output_queue
         self.start()
 
     def run(self):
@@ -21,17 +23,21 @@ class YahooScheduler(threading.Thread):
         """
         while True:
             try:
-                task = self.input_queue.get(
-                    timeout=10
-                )  # Get a task from the input queue
+                task = self.input_queue.get(timeout=10)
             except Empty:
-                print("Yahoo queue is empty")
                 break
-            if task == "DONE":  # If the task is 'DONE', stop the thread
+
+            if task == 'DONE':
+                if self.output_queue:
+                    self.output_queue.put('DONE')
                 break
+
 
             yahoo_worker = YahooFinanceWorker(thread_id=self.id, symbol=task)
             price = yahoo_worker.get_price()
+            if self.output_queue:
+                self.output_queue.put((task, price, datetime.datetime.now()))
+
             print(self.id, " ", task, " ", price)
             time.sleep(random.random())
 
