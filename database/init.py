@@ -4,7 +4,7 @@ import sqlite3
 conn = sqlite3.connect('./stocks.db')
 
 # Create a table
-conn.execute('''CREATE TABLE prices (id serial primary key, symbol text, price real, extraction_time timestamp)''')
+conn.execute('''CREATE TABLE prices (id integer primary key autoincrement, symbol text, price float, extraction_time datetime)''')
 
 
 # Commit the changes and close the connection
