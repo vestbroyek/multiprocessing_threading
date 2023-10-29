@@ -9,20 +9,22 @@ if __name__ == "__main__":
     symbol_queue = queue.Queue()
     sql_queue = queue.Queue()
 
-    # Get start time
+    # Get start time
     scraper_start = time.time()
-    
-    # Create the wiki worker
+
+    # Create the wiki worker
     wiki_worker = WikiWorker()
 
     # Yahoo set up
     yahoo_price_scheduler_threads = []
     num_yahoo_workers = 12
     for i in range(num_yahoo_workers):
-        yahoo_scheduler = YahooScheduler(id=i, input_queue=symbol_queue, output_queue=sql_queue)
+        yahoo_scheduler = YahooScheduler(
+            id=i, input_queue=symbol_queue, output_queue=sql_queue
+        )
         yahoo_price_scheduler_threads.append(yahoo_scheduler)
 
-    # SQL set up
+    # SQL set up
     sql_scheduler_threads = []
     num_sql_workers = 2
     for i in range(num_sql_workers):

@@ -27,11 +27,10 @@ class YahooScheduler(threading.Thread):
             except Empty:
                 break
 
-            if task == 'DONE':
+            if task == "DONE":
                 if self.output_queue:
-                    self.output_queue.put('DONE')
+                    self.output_queue.put("DONE")
                 break
-
 
             yahoo_worker = YahooFinanceWorker(thread_id=self.id, symbol=task)
             price = yahoo_worker.get_price()

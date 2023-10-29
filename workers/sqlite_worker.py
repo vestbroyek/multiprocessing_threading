@@ -2,6 +2,7 @@ from queue import Empty
 import sqlite3
 import threading
 
+
 def truncate_target_table(func):
     def wrapper(*args):
         db_path = args[0].db_path
@@ -16,11 +17,11 @@ def truncate_target_table(func):
             print(f"Error truncating {table_name}")
             raise
         func(*args)
+
     return wrapper
 
 
 class SQLiteScheduler(threading.Thread):
-
     db_path = "stocks.db"
     table_name = "prices"
 
@@ -48,7 +49,6 @@ class SQLiteScheduler(threading.Thread):
 
 
 class SQLiteWorker:
-
     target_table = "prices"
 
     def __init__(self, symbol, price, extraction_time, conn):
